@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+#use Data::Dumper qw(Dumper);
+#$Data::Dumper::Indent = 1;
+
+my $filename = shift || 'memprof.dmp';
+die("Please specify dump filename") unless $filename;
+open(my $fh, "<", $filename) or die ("Cannot read from $filename: $!\n");
+
+my $file_hash = {};
+while(my $line = <$fh>) {
+    chomp $line;
+    my ($package, $file, $line, $mem_abs, $mem_rel, $code) = split(/\|/,$line);
+    next if $mem_rel < 0;
+    $file_hash->{$file . ':' . $line} += $mem_rel;    
+    #print $mem_rel . "\n";
+}
+close($fh);
+
+my $counter = 0;
+foreach my $key (sort { $file_hash->{$b} <=> $file_hash->{$a} } keys %$file_hash) {
+    print $file_hash->{$key} . "\t" . $key . "\n";
+    last if $counter > 10;
+    $counter++;
+}
+
+exit;
