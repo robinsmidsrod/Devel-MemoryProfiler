@@ -2,7 +2,7 @@ use inc::Module::Install;
 name 'Devel-MemoryProfiler';
 all_from 'lib/Devel/MemoryProfiler.pm';
 
-# requires '';
+requires 'GTop' => 0;
 
 tests 't/*.t';
 author_tests 'xt';
